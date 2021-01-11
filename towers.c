@@ -637,8 +637,8 @@ static char *new_game_desc(const game_params *params, random_state *rs,
 			   char **aux, bool interactive)
 {
     int w = params->w, a = w*w;
-    digit *grid, *soln, *soln2;
-    int *clues, *order;
+    digit *grid, soln[a], soln2[a];
+    int clues[4*w], order[max(4*w,a)];
     int i, ret;
     int diff = params->diff;
     char *desc, *p;
@@ -669,10 +669,6 @@ done
 	diff = DIFF_HARD;
 
     grid = NULL;
-    clues = snewn(4*w, int);
-    soln = snewn(a, digit);
-    soln2 = snewn(a, digit);
-    order = snewn(max(4*w,a), int);
 
     while (1) {
 	/*
@@ -819,10 +815,6 @@ done
     (*aux)[a+1] = '\0';
 
     sfree(grid);
-    sfree(clues);
-    sfree(soln);
-    sfree(soln2);
-    sfree(order);
 
     return desc;
 }
@@ -1023,13 +1015,12 @@ static char *solve_game(const game_state *state, const game_state *currstate,
 {
     int w = state->par.w, a = w*w;
     int i, ret;
-    digit *soln;
+    digit soln[a];
     char *out;
 
     if (aux)
 	return dupstr(aux);
 
-    soln = snewn(a, digit);
     memcpy(soln, state->clues->immutable, a);
 
     ret = solver(w, state->clues->clues, soln, DIFFCOUNT-1);
@@ -1048,7 +1039,6 @@ static char *solve_game(const game_state *state, const game_state *currstate,
 	out[a+1] = '\0';
     }
 
-    sfree(soln);
     return out;
 }
 

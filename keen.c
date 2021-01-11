@@ -889,9 +889,9 @@ static char *new_game_desc(const game_params *params, random_state *rs,
 			   char **aux, bool interactive)
 {
     int w = params->w, a = w*w;
-    digit *grid, *soln;
-    int *order, *revorder, *singletons, *dsf;
-    long *clues, *cluevals;
+    digit *grid, soln[a];
+    int order[a], revorder[a], singletons[a], *dsf;
+    long clues[a], cluevals[a];
     int i, j, k, n, x, y, ret;
     int diff = params->diff;
     char *desc, *p;
@@ -924,13 +924,7 @@ done
 
     grid = NULL;
 
-    order = snewn(a, int);
-    revorder = snewn(a, int);
-    singletons = snewn(a, int);
     dsf = snew_dsf(a);
-    clues = snewn(a, long);
-    cluevals = snewn(a, long);
-    soln = snewn(a, digit);
 
     while (1) {
 	/*
@@ -1277,13 +1271,7 @@ done
     (*aux)[a+1] = '\0';
 
     sfree(grid);
-    sfree(order);
-    sfree(revorder);
-    sfree(singletons);
     sfree(dsf);
-    sfree(clues);
-    sfree(cluevals);
-    sfree(soln);
 
     return desc;
 }
@@ -1460,13 +1448,12 @@ static char *solve_game(const game_state *state, const game_state *currstate,
 {
     int w = state->par.w, a = w*w;
     int i, ret;
-    digit *soln;
+    digit soln[a];
     char *out;
 
     if (aux)
 	return dupstr(aux);
 
-    soln = snewn(a, digit);
     memset(soln, 0, a);
 
     ret = solver(w, state->clues->dsf, state->clues->clues,
@@ -1486,7 +1473,6 @@ static char *solve_game(const game_state *state, const game_state *currstate,
 	out[a+1] = '\0';
     }
 
-    sfree(soln);
     return out;
 }
 
@@ -1598,11 +1584,8 @@ static bool check_errors(const game_state *state, long *errors)
     int w = state->par.w, a = w*w;
     int i, j, x, y;
     bool errs = false;
-    long *cluevals;
-    bool *full;
-
-    cluevals = snewn(a, long);
-    full = snewn(a, bool);
+    long cluevals[a];
+    bool full[a];
 
     if (errors)
 	for (i = 0; i < a; i++) {
@@ -1656,9 +1639,6 @@ static bool check_errors(const game_state *state, long *errors)
 	    }
 	}
     }
-
-    sfree(cluevals);
-    sfree(full);
 
     for (y = 0; y < w; y++) {
 	int mask = 0, errmask = 0;
@@ -2248,11 +2228,9 @@ static void outline_block_structure(drawing *dr, game_drawstate *ds,
 				    int w, int *dsf, int ink)
 {
     int a = w*w;
-    int *coords;
+    int coords[4*a];
     int i, n;
     int x, y, dx, dy, sx, sy, sdx, sdy;
-
-    coords = snewn(4*a, int);
 
     /*
      * Iterate over all the blocks.
@@ -2363,8 +2341,6 @@ static void outline_block_structure(drawing *dr, game_drawstate *ds,
 	 */
 	draw_polygon(dr, coords, n, -1, ink);
     }
-
-    sfree(coords);
 }
 
 static void game_print(drawing *dr, const game_state *state, int tilesize)

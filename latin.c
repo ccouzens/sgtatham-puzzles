@@ -1124,11 +1124,11 @@ void latin_debug(digit *sq, int o)
 digit *latin_generate(int o, random_state *rs)
 {
     digit *sq;
-    int *adjdata, *adjsizes, *matching;
-    int **adjlists;
+    int adjdata[o*o], adjsizes[o], matching[o];
+    int* adjlists[o];
     void *scratch;
     int i, j, k;
-    digit *row;
+    digit row[o];
 
     /*
      * To efficiently generate a latin square in such a way that
@@ -1152,7 +1152,6 @@ digit *latin_generate(int o, random_state *rs)
      * introduces a really subtle top-to-bottom directional bias,
      * we'll also generate the rows themselves in random order.
      */
-    row = snewn(o, digit);
     for (i = 0; i < o; i++)
 	row[i] = i;
     shuffle(row, i, sizeof(*row), rs);
@@ -1161,10 +1160,6 @@ digit *latin_generate(int o, random_state *rs)
      * Set up the infrastructure for the matching subroutine.
      */
     scratch = smalloc(matching_scratch_size(o, o));
-    adjdata = snewn(o*o, int);
-    adjlists = snewn(o, int *);
-    adjsizes = snewn(o, int);
-    matching = snewn(o, int);
 
     /*
      * Now generate each row of the latin square.
@@ -1205,12 +1200,7 @@ digit *latin_generate(int o, random_state *rs)
     /*
      * Done. Free our internal workspaces...
      */
-    sfree(matching);
-    sfree(adjlists);
-    sfree(adjsizes);
-    sfree(adjdata);
     sfree(scratch);
-    sfree(row);
 
     /*
      * ... and return our completed latin square.
