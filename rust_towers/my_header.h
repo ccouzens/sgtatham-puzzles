@@ -10,3 +10,5 @@ void sfree(void *p);
 void *srealloc(void *p, size_t size);
 
 char *dupstr(const char *s);
+
+char *bin2hex(const unsigned char *input, int inlen);

@@ -136,23 +136,6 @@ void obfuscate_bitmap(unsigned char *bmp, int bits, bool decode)
     }
 }
 
-/* err, yeah, these two pretty much rely on unsigned char being 8 bits.
- * Platforms where this is not the case probably have bigger problems
- * than just making these two work, though... */
-char *bin2hex(const unsigned char *in, int inlen)
-{
-    char *ret = snewn(inlen*2 + 1, char), *p = ret;
-    int i;
-
-    for (i = 0; i < inlen*2; i++) {
-        int v = in[i/2];
-        if (i % 2 == 0) v >>= 4;
-        *p++ = "0123456789abcdef"[v & 0xF];
-    }
-    *p = '\0';
-    return ret;
-}
-
 unsigned char *hex2bin(const char *in, int outlen)
 {
     unsigned char *ret = snewn(outlen, unsigned char);
