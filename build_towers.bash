@@ -13,7 +13,6 @@ dsf.c \
 grid.c \
 gtk.c \
 latin.c \
-malloc.c \
 matching.c \
 midend.c \
 misc.c \
