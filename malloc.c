@@ -7,18 +7,6 @@
 #include "puzzles.h"
 
 /*
- * smalloc should guarantee to return a useful pointer - Halibut
- * can do nothing except die when it's out of memory anyway.
- */
-void *smalloc(size_t size) {
-    void *p;
-    p = malloc(size);
-    if (!p)
-	fatal("out of memory");
-    return p;
-}
-
-/*
  * sfree should guaranteeably deal gracefully with freeing NULL
  */
 void sfree(void *p) {

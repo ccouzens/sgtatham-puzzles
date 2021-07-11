@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
+(cd rust_towers; cargo build)
+(cd rust_towers; cbindgen --config cbindgen.toml --crate rust_towers --output my_header.h)
+
 gcc \
 -o towers \
+./rust_towers/my_header.h \
 -lm \
 $(pkg-config --libs -cflags gtk+-3.0) \
 drawing.c \
@@ -22,4 +26,6 @@ random.c \
 towers.c  \
 tree234.c \
 version.c \
-&& ./towers
+-L rust_towers/target/debug/ \
+-l rust_towers \
+&& LD_LIBRARY_PATH=./rust_towers/target/debug ./towers
